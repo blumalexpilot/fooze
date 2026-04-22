@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fooze</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    transition: none;
+  }
+
+  .logo {
+    font-family: 'Archivo', Impact, 'Arial Black', 'Helvetica Neue', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(80px, 20vw, 320px);
+    letter-spacing: -0.01em;
+    user-select: none;
+    color: #F6FF00;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scheme name label */
+  .label {
+    position: fixed;
+    bottom: 36px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Archivo', sans-serif;
+    font-style: italic;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.3;
+    z-index: 2;
+    transition: color 0.6s ease;
+  }
+</style>
+</head>
+<body>
+
+<span class="logo" id="logo">Fooze</span>
+<div class="label" id="label"></div>
+
+<script>
+(function () {
+  const schemes = [
+    // Two-tone originals
+    { name: 'Voltage Yellow',   text: [246,255,0],   bg: [10,10,10] },
+    { name: 'Bubblegum',        text: [255,20,147],  bg: [255,246,0] },
+    { name: 'Acid',             text: [10,10,10],    bg: [202,255,62] },
+    { name: 'Night Lime',       text: [202,255,62],  bg: [42,11,78] },
+    { name: 'Vaporwave',        text: [0,255,255],   bg: [255,0,110] },
+    { name: 'Pop Contrast',     text: [255,107,0],   bg: [0,87,255] },
+    // Two-tone inverted
+    { name: 'Voltage Inverted', text: [10,10,10],    bg: [246,255,0] },
+    { name: 'Bubblegum Flip',   text: [255,246,0],   bg: [255,20,147] },
+    { name: 'Acid Inverted',    text: [202,255,62],  bg: [10,10,10] },
+    { name: 'Night Lime Flip',  text: [42,11,78],    bg: [202,255,62] },
+    { name: 'Vaporwave Flip',   text: [255,0,110],   bg: [0,255,255] },
+    { name: 'Pop Contrast Flip',text: [0,87,255],    bg: [255,107,0] },
+    // White background series
+    { name: 'Neon Orange',      text: [255,81,0],    bg: [255,255,255] },
+    { name: 'Blaze',            text: [255,109,0],   bg: [255,255,255] },
+    { name: 'Hot Pink',         text: [255,0,102],   bg: [255,255,255] },
+    { name: 'Electric Violet',  text: [123,47,255],  bg: [255,255,255] },
+    { name: 'Acid Green',       text: [50,205,50],   bg: [255,255,255] },
+    { name: 'Coral Red',        text: [255,49,49],   bg: [255,255,255] },
+  ];
+
+  const logo = document.getElementById('logo');
+  const label = document.getElementById('label');
+  const DURATION = 10000; // 10 seconds per morph
+
+  let currentIndex = 0;
+  let nextIndex = 1;
+
+  // Pick a random next index that isn't the current one
+  function pickNext(current) {
+    let n;
+    do { n = Math.floor(Math.random() * schemes.length); } while (n === current);
+    return n;
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function rgb(arr) {
+    return `rgb(${Math.round(arr[0])}, ${Math.round(arr[1])}, ${Math.round(arr[2])})`;
+  }
+
+  function lerpColor(c1, c2, t) {
+    return [lerp(c1[0], c2[0], t), lerp(c1[1], c2[1], t), lerp(c1[2], c2[2], t)];
+  }
+
+  // Ease in-out for smoother feel
+  function ease(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // Shuffle starting point
+  currentIndex = Math.floor(Math.random() * schemes.length);
+  nextIndex = pickNext(currentIndex);
+
+  // Apply initial colors
+  const startScheme = schemes[currentIndex];
+  document.body.style.background = rgb(startScheme.bg);
+  logo.style.color = rgb(startScheme.text);
+  label.style.color = rgb(startScheme.text);
+  label.textContent = startScheme.name;
+
+  let startTime = performance.now();
+
+  function animate(now) {
+    const elapsed = now - startTime;
+    let t = Math.min(elapsed / DURATION, 1);
+    t = ease(t);
+
+    const from = schemes[currentIndex];
+    const to = schemes[nextIndex];
+
+    const bgNow = lerpColor(from.bg, to.bg, t);
+    const txtNow = lerpColor(from.text, to.text, t);
+
+    document.body.style.background = rgb(bgNow);
+    logo.style.color = rgb(txtNow);
+    label.style.color = rgb(txtNow);
+
+    // Update label at midpoint
+    if (t >= 0.5) {
+      label.textContent = to.name;
+    } else {
+      label.textContent = from.name;
+    }
+
+    // Cycle complete
+    if (elapsed >= DURATION) {
+      currentIndex = nextIndex;
+      nextIndex = pickNext(currentIndex);
+      startTime = now;
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>
