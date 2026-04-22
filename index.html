@@ -54,9 +54,35 @@
 <span class="logo" id="logo">Fooze</span>
 <div class="label" id="label"></div>
 
+<script>
+(function () {
+  const schemes = [
+    // Two-tone originals
+    { name: 'Voltage Yellow',   text: [246,255,0],   bg: [10,10,10] },
+    { name: 'Bubblegum',        text: [255,20,147],  bg: [255,246,0] },
+    { name: 'Acid',             text: [10,10,10],    bg: [202,255,62] },
+    { name: 'Night Lime',       text: [202,255,62],  bg: [42,11,78] },
+    { name: 'Vaporwave',        text: [0,255,255],   bg: [255,0,110] },
+    { name: 'Pop Contrast',     text: [255,107,0],   bg: [0,87,255] },
+    // Two-tone inverted
+    { name: 'Voltage Inverted', text: [10,10,10],    bg: [246,255,0] },
+    { name: 'Bubblegum Flip',   text: [255,246,0],   bg: [255,20,147] },
+    { name: 'Acid Inverted',    text: [202,255,62],  bg: [10,10,10] },
+    { name: 'Night Lime Flip',  text: [42,11,78],    bg: [202,255,62] },
+    { name: 'Vaporwave Flip',   text: [255,0,110],   bg: [0,255,255] },
+    { name: 'Pop Contrast Flip',text: [0,87,255],    bg: [255,107,0] },
+    // White background series
+    { name: 'Neon Orange',      text: [255,81,0],    bg: [255,255,255] },
+    { name: 'Blaze',            text: [255,109,0],   bg: [255,255,255] },
+    { name: 'Hot Pink',         text: [255,0,102],   bg: [255,255,255] },
+    { name: 'Electric Violet',  text: [123,47,255],  bg: [255,255,255] },
+    { name: 'Acid Green',       text: [50,205,50],   bg: [255,255,255] },
+    { name: 'Coral Red',        text: [255,49,49],   bg: [255,255,255] },
+  ];
+
   const logo = document.getElementById('logo');
   const label = document.getElementById('label');
-  const DURATION = 10000; // 10 seconds per morph
+  const DURATION = 5000; // 5 seconds per morph
 
   let currentIndex = 0;
   let nextIndex = 1;
