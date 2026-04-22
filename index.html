@@ -31,28 +31,13 @@
     z-index: 1;
   }
 
-  /* Scheme name label */
-  .label {
-    position: fixed;
-    bottom: 36px;
-    left: 0; right: 0;
-    text-align: center;
-    font-family: 'Archivo', sans-serif;
-    font-style: italic;
-    font-weight: 900;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    opacity: 0.3;
-    z-index: 2;
-    transition: color 0.6s ease;
-  }
+
 </style>
 </head>
 <body>
 
 <span class="logo" id="logo">Fooze</span>
-<div class="label" id="label"></div>
+
 
 <script>
 (function () {
@@ -81,7 +66,6 @@
   ];
 
   const logo = document.getElementById('logo');
-  const label = document.getElementById('label');
   const DURATION = 5000; // 5 seconds per morph
 
   let currentIndex = 0;
@@ -119,8 +103,6 @@
   const startScheme = schemes[currentIndex];
   document.body.style.background = rgb(startScheme.bg);
   logo.style.color = rgb(startScheme.text);
-  label.style.color = rgb(startScheme.text);
-  label.textContent = startScheme.name;
 
   let startTime = performance.now();
 
@@ -137,14 +119,6 @@
 
     document.body.style.background = rgb(bgNow);
     logo.style.color = rgb(txtNow);
-    label.style.color = rgb(txtNow);
-
-    // Update label at midpoint
-    if (t >= 0.5) {
-      label.textContent = to.name;
-    } else {
-      label.textContent = from.name;
-    }
 
     // Cycle complete
     if (elapsed >= DURATION) {
